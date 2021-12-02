@@ -1,6 +1,8 @@
 package com.pascal7.ingre_api_mono.service;
 
 import com.pascal7.ingre_api_mono.entity.User;
+import com.pascal7.ingre_api_mono.properties.CustomerCredentials;
+import com.pascal7.ingre_api_mono.properties.TokenResponse;
 
 import java.util.List;
 
@@ -10,4 +12,5 @@ public interface UserService {
     List<User> getAll();
     User update(User user);
     void delete(String id);
+    TokenResponse userLogIn(CustomerCredentials customerCredentials);
 }

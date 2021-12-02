@@ -1,6 +1,8 @@
 package com.pascal7.ingre_api_mono.controller;
 
 import com.pascal7.ingre_api_mono.entity.User;
+import com.pascal7.ingre_api_mono.properties.CustomerCredentials;
+import com.pascal7.ingre_api_mono.properties.TokenResponse;
 import com.pascal7.ingre_api_mono.properties.VerificationStat;
 import com.pascal7.ingre_api_mono.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,16 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/api/user/register")
+    @GetMapping("/api/auth/login")
+    public TokenResponse login(@RequestBody CustomerCredentials customerCredentials){
+        return userService.userLogIn(customerCredentials);
+    }
+
+    @PostMapping("/api/auth/register")
     public User createUser(@RequestBody User user){
+        System.out.println("oke");
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
-        user.setRole("USER");
+        user.setRole("user");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
         return userService.create(user);
     }
