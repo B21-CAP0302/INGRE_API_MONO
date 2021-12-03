@@ -30,6 +30,7 @@ public class Ingredient {
         this.name = name;
         this.stock = stock;
         this.price = price;
+        //auto generate date without input. will be call every object create
         this.date = getDate();
     }
 
