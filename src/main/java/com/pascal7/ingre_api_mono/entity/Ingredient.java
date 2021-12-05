@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.query.criteria.internal.expression.function.CurrentTimestampFunction;
 
@@ -7,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @Entity
@@ -18,24 +21,34 @@ public class Ingredient {
     @GenericGenerator(name = "ingredient_uuid", strategy = "uuid")
     private String id;
 
+    @NotBlank
     private String name;
+    @NotNull
     private Integer stock;
+    @NotNull
     private Integer price;
+    @JsonIgnore
     private Timestamp date;
+    @NotBlank
+    private String unit;
 
     public Ingredient() {
     }
 
-    public Ingredient(String name, Integer stock, Integer price) {
-        this.name = name;
-        this.stock = stock;
-        this.price = price;
-        //auto generate date without input. will be call every object create
-        this.date = getDate();
-    }
-
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getName() {

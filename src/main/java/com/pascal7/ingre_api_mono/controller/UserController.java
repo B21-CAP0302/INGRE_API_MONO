@@ -1,10 +1,12 @@
 package com.pascal7.ingre_api_mono.controller;
 
+import com.pascal7.ingre_api_mono.custom.ResponseStat;
 import com.pascal7.ingre_api_mono.entity.User;
-import com.pascal7.ingre_api_mono.properties.CustomerCredentials;
-import com.pascal7.ingre_api_mono.properties.TokenResponse;
-import com.pascal7.ingre_api_mono.properties.VerificationStat;
+import com.pascal7.ingre_api_mono.custom.CustomerCredentials;
+import com.pascal7.ingre_api_mono.custom.TokenResponse;
+import com.pascal7.ingre_api_mono.custom.VerificationStat;
 import com.pascal7.ingre_api_mono.service.UserService;
+import com.pascal7.ingre_api_mono.utils.BankString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,18 +18,36 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/api/auth/login")
+    @PostMapping("/api/auth/login")
     public TokenResponse login(@RequestBody CustomerCredentials customerCredentials){
+        customerCredentials.setAuthority("user");
+        System.out.println(customerCredentials.getAuthority());
+        return userService.userLogIn(customerCredentials);
+    }
+
+    @PostMapping("/api/auth/admin")
+    public TokenResponse loginAdmin(@RequestBody CustomerCredentials customerCredentials){
+        customerCredentials.setAuthority("admin");
+        System.out.println(customerCredentials.getAuthority());
         return userService.userLogIn(customerCredentials);
     }
 
     @PostMapping("/api/auth/register")
-    public User createUser(@RequestBody User user){
-        System.out.println("oke");
+    public ResponseStat createUser(@RequestBody User user){
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("user");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        return userService.create(user);
+        userService.create(user);
+        return new ResponseStat(user.getId(), BankString.success);
+    }
+
+    @PostMapping("/api/auth/register/admin")
+    public ResponseStat createAdmin(@RequestBody User user){
+        user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
+        user.setRole("admin");
+        user.setDateCreated(new Timestamp(System.currentTimeMillis()));
+        userService.create(user);
+        return new ResponseStat(user.getId(), BankString.success);
     }
 
     @GetMapping("/api/user/profile/{id}")

@@ -1,8 +1,8 @@
 package com.pascal7.ingre_api_mono.service;
 
 import com.pascal7.ingre_api_mono.entity.User;
-import com.pascal7.ingre_api_mono.properties.CustomerCredentials;
-import com.pascal7.ingre_api_mono.properties.TokenResponse;
+import com.pascal7.ingre_api_mono.custom.CustomerCredentials;
+import com.pascal7.ingre_api_mono.custom.TokenResponse;
 
 import java.util.List;
 

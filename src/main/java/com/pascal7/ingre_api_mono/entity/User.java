@@ -37,6 +37,13 @@ public class User {
     public User() {
     }
 
+    public User setUser(User user){
+        this.address = user.getAddress();
+        this.phoneNumber = user.getPhoneNumber();
+        this.photo = user.getPhoto();
+        return this;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }

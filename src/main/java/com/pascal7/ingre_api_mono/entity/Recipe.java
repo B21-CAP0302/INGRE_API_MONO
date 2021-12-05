@@ -1,5 +1,7 @@
 package com.pascal7.ingre_api_mono.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pascal7.ingre_api_mono.custom.RecipeDto;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -18,6 +20,7 @@ public class Recipe {
     private String id;
 
     private String name;
+    @JsonIgnore
     private Timestamp date;
     private String photo;
 
@@ -28,6 +31,12 @@ public class Recipe {
         this.name = name;
         this.date = date;
         this.photo = photo;
+    }
+
+    public Recipe(RecipeDto recipeDto){
+        this.id = recipeDto.getId();
+        this.name = recipeDto.getName();
+        this.date = recipeDto.getDate();
     }
 
     public String getId() {

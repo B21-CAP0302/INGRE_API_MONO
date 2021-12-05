@@ -1,4 +1,4 @@
-package com.pascal7.ingre_api_mono.properties;
+package com.pascal7.ingre_api_mono.custom;
 
 public enum VerificationStat {
     VERIFIED("verified"),

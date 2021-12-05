@@ -53,8 +53,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/admin/*/**").hasAuthority("admin")
-                .antMatchers("/api/user/*/**").hasAuthority("user")
+                .antMatchers("/api/admin/**/*").hasAuthority("admin")
+                .antMatchers("/api/user/**/*").hasAuthority("user")
                 .anyRequest().permitAll()
                 .and().addFilterBefore(
                         filter,

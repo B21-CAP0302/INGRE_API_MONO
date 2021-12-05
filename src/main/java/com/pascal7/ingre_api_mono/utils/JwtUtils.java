@@ -1,14 +1,13 @@
 package com.pascal7.ingre_api_mono.utils;
 
 import com.pascal7.ingre_api_mono.service.UserDetailServiceImpl;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -35,10 +34,15 @@ public class JwtUtils {
     }
 
     public UserDetails parseToken(String token){
-        Jws<Claims> jws = Jwts
-                .parserBuilder()
-                .setSigningKey(secret).build()
-                .parseClaimsJws(token);
+        Jws<Claims> jws;
+        try {
+            jws = Jwts
+                    .parserBuilder()
+                    .setSigningKey(secret).build()
+                    .parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, BankString.tokenTimeOut);
+        }
 
         String username = jws.getBody().getSubject();
         return userDetailService.loadUserByUsername(username);

@@ -6,27 +6,33 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "tx_ingredient_recipe")
-public class Transaction {
+public class TxIngredientRecipe {
 
     @Id
     @GeneratedValue(generator = "ingredient_recipe_uuid")
     @GenericGenerator(name = "ingredient_recipe_uuid", strategy = "uuid")
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "recipe_id")
-    private Recipe recipe;
+    @Transient
+    private String recipeId;
 
     @ManyToOne
-    @JoinColumn(name = "ingredient_id")
+    @JoinColumn(name = "recipeId")
+    private Recipe recipe;
+
+    @Transient
+    private String ingredientId;
+
+    @ManyToOne
+    @JoinColumn(name = "ingredientId")
     private Ingredient ingredient;
 
     private Integer quantity;
 
-    public Transaction() {
+    public TxIngredientRecipe() {
     }
 
-    public Transaction(Recipe recipe, Ingredient ingredient, Integer quantity) {
+    public TxIngredientRecipe(Recipe recipe, Ingredient ingredient, Integer quantity) {
         this.recipe = recipe;
         this.ingredient = ingredient;
         this.quantity = quantity;

@@ -1,7 +1,7 @@
 package com.pascal7.ingre_api_mono.service;
 
 import com.pascal7.ingre_api_mono.entity.User;
-import com.pascal7.ingre_api_mono.properties.CustomerDetails;
+import com.pascal7.ingre_api_mono.custom.CustomerDetails;
 import com.pascal7.ingre_api_mono.repository.UserDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         validateEmailIsExist(username);
-        User user = userDetailRepository.findByEmail(username).get();
+        User user = getUserByUsername(username);
         List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority(user.getRole()));
 
@@ -34,6 +34,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 user.getPassword(),
                 authorityList
         );
+    }
+
+    public User getUserByUsername(String username){
+        validateEmailIsExist(username);
+        return userDetailRepository.findByEmail(username).get();
     }
 
     public void validateEmailIsExist(String username) {

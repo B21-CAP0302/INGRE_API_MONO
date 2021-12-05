@@ -1,4 +1,4 @@
-package com.pascal7.ingre_api_mono.properties;
+package com.pascal7.ingre_api_mono.custom;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
