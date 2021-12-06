@@ -38,7 +38,7 @@ public class RecipeController {
     }
 
     @GetMapping("/api/product/recipe/category")
-    public List<Recipe> getRecipeByCategory(@RequestParam String name){
+    public List<RecipeDto> getRecipeByCategory(@RequestParam String name){
         return recipeService.recipeByCategory(name);
     }
 

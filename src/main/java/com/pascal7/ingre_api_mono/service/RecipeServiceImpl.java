@@ -2,7 +2,9 @@ package com.pascal7.ingre_api_mono.service;
 
 import com.pascal7.ingre_api_mono.custom.Category;
 import com.pascal7.ingre_api_mono.custom.CategoryEnum;
+import com.pascal7.ingre_api_mono.custom.IngredientDto;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
+import com.pascal7.ingre_api_mono.entity.Ingredient;
 import com.pascal7.ingre_api_mono.entity.Recipe;
 import com.pascal7.ingre_api_mono.entity.RecipeDetail;
 import com.pascal7.ingre_api_mono.entity.TxIngredientRecipe;
@@ -16,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,9 @@ public class RecipeServiceImpl implements RecipeService{
 
     @Autowired
     TxIngredientRecipeServiceImpl txIngredientRecipeService;
+
+    @Autowired
+    IngredientService ingredientService;
 
     @Autowired
     Helper helper;
@@ -42,6 +48,19 @@ public class RecipeServiceImpl implements RecipeService{
         recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
         saveTxIngredientRecipe(recipeDto, recipe);
         recipeDto.setId(recipe.getId());
+        recipeDto.setIngredients(recipeDto.getIngredients()
+                .stream()
+                .map(
+                    ingredientDto -> new IngredientDto(
+                            ingredientService
+                                    .getById(
+                                            ingredientDto
+                                                    .getIngredient()
+                                                    .getId()),
+                                            ingredientDto
+                                                    .getQty()
+                    )
+        ).collect(Collectors.toList()));
         return recipeDto;
     }
 
@@ -70,6 +89,7 @@ public class RecipeServiceImpl implements RecipeService{
             }
             recipeDetails.add(new RecipeDetail(recipe, detail));
         }
+        Collections.reverse(recipeDetails);
         return recipeDetails;
     }
 
@@ -151,7 +171,21 @@ public class RecipeServiceImpl implements RecipeService{
     }
 
     @Override
-    public List<Recipe> recipeByCategory(String category) {
-        return recipeRepository.findByCategory(category);
+    public List<RecipeDto> recipeByCategory(String category) {
+        List<RecipeDto> recipeDtos = new ArrayList<>();
+        recipeRepository.findByCategory(category).forEach(
+                recipe -> {
+                    StringBuilder detail = new StringBuilder();
+                    recipeDetailService.getByRecipe(recipe).forEach(
+                            recipeDetail -> detail.append(recipeDetail.getDetail())
+                    );
+                    recipeDtos.add(new RecipeDto(
+                            recipe,
+                            detail.toString(),
+                            txIngredientRecipeService.getByRecipe(recipe))
+                    );
+                }
+        );
+        return recipeDtos;
     }
 }

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface RecipeService extends CRUDServiceTemplate<RecipeDto>{
     List<Category> categories();
-    List<Recipe> recipeByCategory(String category);
+    List<RecipeDto> recipeByCategory(String category);
 }
