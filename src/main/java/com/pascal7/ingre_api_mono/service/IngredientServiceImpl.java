@@ -23,7 +23,14 @@ public class IngredientServiceImpl implements IngredientService{
     @Override
     public Ingredient create(Ingredient ingredient) {
         helper.validateIdIsNull(ingredient.getId());
+        validateNameIsNotExist(ingredient.getName());
         return ingredientRepository.save(ingredient);
+    }
+
+    private void validateNameIsNotExist(String name) {
+        if(ingredientRepository.findByName(name).isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.nameAlreadyExist);
+        }
     }
 
     @Override

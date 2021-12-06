@@ -10,4 +10,5 @@ public class BankString {
     public static final String tokenTimeOut = "your token has expired";
     public static final String success = "success";
     public static final String failed = "failed";
+    public static final String nameAlreadyExist = "Name Already Exist";
 }
