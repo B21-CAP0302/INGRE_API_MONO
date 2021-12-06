@@ -1,6 +1,8 @@
 package com.pascal7.ingre_api_mono.controller;
 
+import com.pascal7.ingre_api_mono.custom.Category;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
+import com.pascal7.ingre_api_mono.entity.Recipe;
 import com.pascal7.ingre_api_mono.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,16 @@ public class RecipeController {
     @GetMapping("/api/product/recipe/{id}")
     public RecipeDto getRecipe(@PathVariable String id){
         return recipeService.getById(id);
+    }
+
+    @GetMapping("/api/product/categories")
+    public List<Category> getCategories(){
+        return recipeService.categories();
+    }
+
+    @GetMapping("/api/product/recipe/category")
+    public List<Recipe> getRecipeByCategory(@RequestParam String name){
+        return recipeService.recipeByCategory(name);
     }
 
     @PutMapping("/api/admin/product/recipe")

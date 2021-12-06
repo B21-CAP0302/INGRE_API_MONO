@@ -22,21 +22,17 @@ public class Recipe {
     private String name;
     @JsonIgnore
     private Timestamp date;
+    private String category;
     private String photo;
 
     public Recipe() {
-    }
-
-    public Recipe(String name, Timestamp date, String photo) {
-        this.name = name;
-        this.date = date;
-        this.photo = photo;
     }
 
     public Recipe(RecipeDto recipeDto){
         this.id = recipeDto.getId();
         this.name = recipeDto.getName();
         this.date = recipeDto.getDate();
+        this.category = recipeDto.getCategory();
     }
 
     public String getId() {
@@ -61,6 +57,14 @@ public class Recipe {
 
     public String getPhoto() {
         return photo;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setPhoto(String photo) {

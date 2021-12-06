@@ -1,5 +1,7 @@
 package com.pascal7.ingre_api_mono.service;
 
+import com.pascal7.ingre_api_mono.custom.Category;
+import com.pascal7.ingre_api_mono.custom.CategoryEnum;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
 import com.pascal7.ingre_api_mono.entity.Recipe;
 import com.pascal7.ingre_api_mono.entity.RecipeDetail;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeServiceImpl implements RecipeService{
@@ -135,5 +139,19 @@ public class RecipeServiceImpl implements RecipeService{
         deleteIngredientList(recipe);
         recipeRepository.delete(recipe);
         throw new ResponseStatusException(HttpStatus.ACCEPTED, String.format(BankString.idDeleteFormat, id));
+    }
+
+    @Override
+    public List<Category> categories() {
+        List<Category> categories = new ArrayList<>();
+        Arrays.stream(CategoryEnum.values()).forEach(categoryEnum -> {
+           categories.add(new Category(categoryEnum.getValue()));
+        });
+        return categories;
+    }
+
+    @Override
+    public List<Recipe> recipeByCategory(String category) {
+        return recipeRepository.findByCategory(category);
     }
 }

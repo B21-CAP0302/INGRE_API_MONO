@@ -20,6 +20,7 @@ public class RecipeDto {
     private Timestamp date;
     @NotBlank
     private List<IngredientDto> ingredients = new ArrayList<>();
+    private String category;
     private String photo;
 
     public RecipeDto() {
@@ -31,6 +32,7 @@ public class RecipeDto {
         this.date = recipe.getDate();
         this.photo = recipe.getPhoto();
         this.recipeDetail = recipeDetail;
+        this.category = recipe.getCategory();
         ingredients.forEach(
                 txIngredientRecipe -> {
                     this.ingredients.add(new IngredientDto(txIngredientRecipe));
@@ -68,6 +70,14 @@ public class RecipeDto {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public List<IngredientDto> getIngredients() {
