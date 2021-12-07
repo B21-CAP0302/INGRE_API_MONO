@@ -2,6 +2,7 @@ package com.pascal7.ingre_api_mono.service;
 
 import com.pascal7.ingre_api_mono.custom.TransactionDto;
 import com.pascal7.ingre_api_mono.custom.TransactionStat;
+import com.pascal7.ingre_api_mono.entity.Ingredient;
 import com.pascal7.ingre_api_mono.entity.Recipe;
 import com.pascal7.ingre_api_mono.entity.TxTransaction;
 import com.pascal7.ingre_api_mono.entity.TxTransactionCheckout;
@@ -33,14 +34,17 @@ public class TxTransactionServiceImpl implements TxTransactionService {
     RecipeService recipeService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     Helper helper;
 
     @Override
     public TransactionDto create(TransactionDto transactionDto) {
         helper.validateIdIsNull(transactionDto.getId());
+        validateTotal(transactionDto);
         TxTransaction txTransaction = getTxTransactionWithCheckout(transactionDto, false);
-        txTransaction.setId(txTransaction.getId());
-        txTransaction.setRecipe(new Recipe(recipeService.getById(txTransaction.getIdRecipe())));
+        transactionDto.setId(txTransaction.getId());
         return transactionDto;
     }
 
@@ -57,6 +61,7 @@ public class TxTransactionServiceImpl implements TxTransactionService {
     @Override
     public TransactionDto update(TransactionDto transactionDto) {
         validateIdIsExist(transactionDto.getId());
+        validateTotal(transactionDto);
         getTxTransactionWithCheckout(transactionDto, true);
         return transactionDto;
     }
@@ -87,19 +92,59 @@ public class TxTransactionServiceImpl implements TxTransactionService {
 
     @Override
     public TransactionDto checkTransactionStatusToOnDelivery(String id) {
+        validateTransactionStat(id, TransactionStat.WAITING.getValue());
         return setStatTransaction(id, TransactionStat.ON_DELIVERY.getValue());
     }
 
     @Override
     public TransactionDto checkTransactionStatusToDone(String id) {
+        validateTransactionStat(id, TransactionStat.ON_DELIVERY.getValue());
         return setStatTransaction(id, TransactionStat.DONE.getValue());
+    }
+
+    @Override
+    public List<TransactionDto> getUserTransaction(String id) {
+        List<TransactionDto> transactionDtos = new ArrayList<>();
+        txTransactionRepository.findByUser(userService.getById(id)).forEach(
+                txTransaction -> {
+                    transactionDtos.add(
+                            new TransactionDto(
+                                    getFullTxTransaction(txTransaction.getId()),
+                                    getFullTxTransactionCheckoutList(txTransaction)
+                            )
+                    );
+                }
+        );
+        return transactionDtos;
+    }
+
+    private void validateTransactionStat(String id, String stat) {
+        if(!getById(id).getStat().equals(stat)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, BankString.statusIsNotAccepted);
+        }
+    }
+
+    private void validateTotal(TransactionDto transactionDto) {
+        List<Integer> total = new ArrayList<>();
+        transactionDto.getIngredient().forEach(
+                txTransactionCheckout -> {
+                    total.add(ingredientService.getById(txTransactionCheckout.getIdIngredient()).getPrice() * txTransactionCheckout.getQty());
+                }
+        );
+        if((int)total.stream().mapToDouble(value -> value).sum() != transactionDto.getTotal()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, BankString.totalDidNotMatch);
+        }
     }
 
     private TxTransaction getFullTxTransaction(String id) {
         TxTransaction txTransaction = txTransactionRepository.getById(id);
+        setTransactionFieldId(txTransaction);
+        return txTransaction;
+    }
+
+    private void setTransactionFieldId(TxTransaction txTransaction) {
         txTransaction.setIdRecipe(txTransaction.getRecipe().getId());
         txTransaction.setIdUser(txTransaction.getUser().getId());
-        return txTransaction;
     }
 
     private void validateIdIsExist(String id) {
@@ -109,18 +154,27 @@ public class TxTransactionServiceImpl implements TxTransactionService {
     }
 
     private TxTransaction getTxTransactionWithCheckout(TransactionDto transactionDto, Boolean delete) {
+        setTransactionObjectField(transactionDto);
         TxTransaction txTransaction = txTransactionRepository.save(new TxTransaction(transactionDto));
         if(delete){
             deleteCheckoutByTransaction(txTransaction);
         }
         transactionDto.getIngredient().forEach(
                 txTransactionCheckout -> {
+                    Ingredient ingredient = ingredientService.getById(txTransactionCheckout.getIdIngredient());
+                    ingredient.setStock(ingredient.getStock() - txTransactionCheckout.getQty());
+                    ingredientService.update(ingredient);
                     txTransactionCheckout.setTransaction(txTransaction);
-                    txTransactionCheckout.setIngredient(ingredientService.getById(txTransactionCheckout.getIdIngredient()));
+                    txTransactionCheckout.setIngredient(ingredient);
                     txTransactionCheckoutService.create(txTransactionCheckout);
                 }
         );
         return txTransaction;
+    }
+
+    private void setTransactionObjectField(TransactionDto transactionDto) {
+        transactionDto.setUser(userService.getById(transactionDto.getIdUser()));
+        transactionDto.setRecipe(new Recipe(recipeService.getById(transactionDto.getIdRecipe())));
     }
 
     private void deleteCheckoutByTransaction(TxTransaction txTransaction) {
@@ -131,10 +185,10 @@ public class TxTransactionServiceImpl implements TxTransactionService {
         );
     }
 
-    private TransactionDto setStatTransaction(String id, String stat) {
+    private TransactionDto setStatTransaction(String id ,String stat) {
         TxTransaction txTransaction = getFullTxTransaction(id);
-        txTransactionRepository.save(txTransaction);
         txTransaction.setStat(stat);
+        txTransactionRepository.save(txTransaction);
         return new TransactionDto(
                 txTransaction,
                 getFullTxTransactionCheckoutList(txTransaction)

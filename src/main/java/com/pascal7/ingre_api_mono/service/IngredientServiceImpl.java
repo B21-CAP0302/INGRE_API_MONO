@@ -24,6 +24,7 @@ public class IngredientServiceImpl implements IngredientService{
     public Ingredient create(Ingredient ingredient) {
         helper.validateIdIsNull(ingredient.getId());
         validateNameIsNotExist(ingredient.getName());
+        validateStockIsNotMinus(ingredient.getStock());
         return ingredientRepository.save(ingredient);
     }
 
@@ -46,18 +47,19 @@ public class IngredientServiceImpl implements IngredientService{
         }
     }
 
-    private void validateIdIsNotExist(String id) {
-        if(ingredientRepository.findById(id).isPresent()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.idIsExist);
-        }
-    }
-
     @Override
     public Ingredient update(Ingredient ingredient) {
         helper.validateIdIsNotNull(ingredient.getId());
         validateIdIsExist(ingredient.getId());
+        validateStockIsNotMinus(ingredient.getStock());
         ingredient.setDate(getById(ingredient.getId()).getDate());
         return ingredientRepository.save(ingredient);
+    }
+
+    private void validateStockIsNotMinus(Integer stock) {
+        if(stock <= 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "stock empty or minus");
+        }
     }
 
     @Override
