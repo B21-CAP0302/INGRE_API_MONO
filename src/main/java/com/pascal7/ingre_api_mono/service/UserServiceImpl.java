@@ -70,7 +70,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        return userRepository.save(getById(user.getId()).setUser(user));
+        User customer = getById(user.getId());
+        if(customer.getGender() == null){
+            customer.setGender(user.getGender());
+        }
+        if(customer.getBirthDate() == null){
+            customer.setBirthDate(user.getBirthDate());
+        }
+        return userRepository.save(customer.setUser(user));
     }
 
     @Override

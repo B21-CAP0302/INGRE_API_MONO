@@ -30,6 +30,10 @@ public class TransactionDto {
     private String recipeStat;
     @NotBlank
     private Integer total;
+    @NotBlank
+    private String phoneNumber;
+    @NotBlank
+    private String address;
     @JsonIgnore
     private String prove;
     private String stat;
@@ -50,6 +54,8 @@ public class TransactionDto {
         this.recipeStat = txTransaction.getRecipeStat();
         this.total = txTransaction.getTotal();
         this.prove = txTransaction.getProve();
+        this.phoneNumber = txTransaction.getPhoneNumber();
+        this.address = txTransaction.getAddress();
         this.stat = txTransaction.getStat();
         this.dateCreated = txTransaction.getDateCreated();
         this.ingredient = ingredient;
@@ -77,6 +83,22 @@ public class TransactionDto {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getIdRecipe() {

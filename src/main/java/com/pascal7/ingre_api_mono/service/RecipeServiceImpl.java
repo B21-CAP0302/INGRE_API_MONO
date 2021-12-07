@@ -4,7 +4,6 @@ import com.pascal7.ingre_api_mono.custom.Category;
 import com.pascal7.ingre_api_mono.custom.CategoryEnum;
 import com.pascal7.ingre_api_mono.custom.IngredientDto;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
-import com.pascal7.ingre_api_mono.entity.Ingredient;
 import com.pascal7.ingre_api_mono.entity.Recipe;
 import com.pascal7.ingre_api_mono.entity.RecipeDetail;
 import com.pascal7.ingre_api_mono.entity.TxIngredientRecipe;
