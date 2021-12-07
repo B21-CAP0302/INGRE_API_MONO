@@ -32,6 +32,8 @@ public class TxTransaction {
     private String recipeStat;
     private Integer total;
     private String prove;
+    private String phoneNumber;
+    private String address;
     private String stat;
     private Timestamp dateCreated;
 
@@ -47,8 +49,16 @@ public class TxTransaction {
         this.recipeStat = transactionDto.getRecipeStat();
         this.total = transactionDto.getTotal();
         this.prove = transactionDto.getProve();
+        this.phoneNumber = transactionDto.getPhoneNumber();
+        this.address = transactionDto.getAddress();
         this.stat = transactionDto.getStat();
         this.dateCreated = transactionDto.getDateCreated();
+    }
+
+    public TxTransaction setTransaction(TxTransaction txTransaction){
+        this.phoneNumber = txTransaction.getPhoneNumber();
+        this.address = txTransaction.getAddress();
+        return this;
     }
 
     public void setId(String id) {
@@ -113,6 +123,22 @@ public class TxTransaction {
 
     public String getStat() {
         return stat;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getProve() {
