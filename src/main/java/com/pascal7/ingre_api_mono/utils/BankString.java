@@ -11,4 +11,6 @@ public class BankString {
     public static final String success = "success";
     public static final String failed = "failed";
     public static final String nameAlreadyExist = "Name Already Exist";
+    public static final String totalDidNotMatch = "Total Did Not Match";
+    public static final String statusIsNotAccepted = "Status Is Not Accepted";
 }

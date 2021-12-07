@@ -6,6 +6,7 @@ import com.pascal7.ingre_api_mono.entity.TxTransaction;
 import com.pascal7.ingre_api_mono.entity.TxTransactionCheckout;
 import com.pascal7.ingre_api_mono.entity.User;
 
+import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -13,11 +14,13 @@ public class TransactionDto {
 
     private String id;
 
+    @NotBlank
     private String idUser;
 
     @JsonIgnore
     private User user;
 
+    @NotBlank
     private String idRecipe;
 
     @JsonIgnore
@@ -25,12 +28,14 @@ public class TransactionDto {
 
     @JsonIgnore
     private String recipeStat;
+    @NotBlank
     private Integer total;
-    private String prove;
     @JsonIgnore
+    private String prove;
     private String stat;
     @JsonIgnore
     private Timestamp dateCreated;
+    @NotBlank
     private List<TxTransactionCheckout> ingredient;
 
     public TransactionDto() {

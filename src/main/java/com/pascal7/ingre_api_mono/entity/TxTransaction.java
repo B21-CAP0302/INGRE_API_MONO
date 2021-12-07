@@ -126,4 +126,20 @@ public class TxTransaction {
     public Timestamp getDateCreated() {
         return dateCreated;
     }
+
+    @Override
+    public String toString() {
+        return "TxTransaction{" +
+                "id='" + id + '\'' +
+                ", idUser='" + idUser + '\'' +
+                ", user=" + user +
+                ", idRecipe='" + idRecipe + '\'' +
+                ", recipe=" + recipe +
+                ", recipeStat='" + recipeStat + '\'' +
+                ", total=" + total +
+                ", prove='" + prove + '\'' +
+                ", stat='" + stat + '\'' +
+                ", dateCreated=" + dateCreated +
+                '}';
+    }
 }
