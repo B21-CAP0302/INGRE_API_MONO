@@ -55,8 +55,7 @@ public class RecipeServiceImpl implements RecipeService{
                             ingredientService
                                     .getById(
                                             ingredientDto
-                                                    .getIngredient()
-                                                    .getId()),
+                                                    .getIngredientId()),
                                             ingredientDto
                                                     .getQty()
                     )
@@ -70,7 +69,7 @@ public class RecipeServiceImpl implements RecipeService{
                     txIngredientRecipeService.create(
                             new TxIngredientRecipe(
                                     recipe,
-                                    ingredientDto.getIngredient(),
+                                    ingredientService.getById(ingredientDto.getIngredientId()),
                                     ingredientDto.getQty())
                     );
                 }
