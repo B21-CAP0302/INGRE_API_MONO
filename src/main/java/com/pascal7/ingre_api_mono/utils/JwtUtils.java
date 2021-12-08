@@ -29,7 +29,7 @@ public class JwtUtils {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Timestamp(System.currentTimeMillis()))
-                .setExpiration(new Timestamp(System.currentTimeMillis() + (1000L*60*minute)))
+//                .setExpiration(new Timestamp(System.currentTimeMillis() + (1000L*60*minute)))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
