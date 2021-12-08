@@ -44,7 +44,7 @@ public class TxTransactionServiceImpl implements TxTransactionService {
         helper.validateIdIsNull(transactionDto.getId());
         validateTotal(transactionDto);
         TxTransaction txTransaction = getTxTransactionWithCheckout(transactionDto, false);
-        transactionDto.setId(txTransaction.getId());
+        setTransactionDto(transactionDto, txTransaction);
         return transactionDto;
     }
 
@@ -62,7 +62,8 @@ public class TxTransactionServiceImpl implements TxTransactionService {
     public TransactionDto update(TransactionDto transactionDto) {
         validateIdIsExist(transactionDto.getId());
         validateTotal(transactionDto);
-        getTxTransactionWithCheckout(transactionDto, true);
+        TxTransaction txTransaction = getTxTransactionWithCheckout(transactionDto, true);
+        setTransactionDto(transactionDto, txTransaction);
         return transactionDto;
     }
 
@@ -116,6 +117,12 @@ public class TxTransactionServiceImpl implements TxTransactionService {
                 }
         );
         return transactionDtos;
+    }
+
+    private void setTransactionDto(TransactionDto transactionDto, TxTransaction txTransaction) {
+        transactionDto.setId(txTransaction.getId());
+        transactionDto.setRecipeName(txTransaction.getRecipe().getName());
+        transactionDto.setName(txTransaction.getUser().getFullName());
     }
 
     private void validateTransactionStat(String id, String stat) {
