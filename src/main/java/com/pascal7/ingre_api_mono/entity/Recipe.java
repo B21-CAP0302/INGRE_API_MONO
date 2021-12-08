@@ -70,4 +70,15 @@ public class Recipe {
     public void setPhoto(String photo) {
         this.photo = photo;
     }
+
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", category='" + category + '\'' +
+                ", photo='" + photo + '\'' +
+                '}';
+    }
 }

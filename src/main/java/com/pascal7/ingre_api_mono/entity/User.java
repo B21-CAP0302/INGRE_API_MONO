@@ -135,4 +135,22 @@ public class User {
     public String getPhoto() {
         return photo;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", address='" + address + '\'' +
+                ", gender='" + gender + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", birthDate=" + birthDate +
+                ", dateCreated=" + dateCreated +
+                ", role='" + role + '\'' +
+                ", verificationStat='" + verificationStat + '\'' +
+                ", photo='" + photo + '\'' +
+                '}';
+    }
 }

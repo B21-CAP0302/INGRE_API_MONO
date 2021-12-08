@@ -17,11 +17,15 @@ public class TransactionDto {
     @NotBlank
     private String idUser;
 
+    private String name;
+
     @JsonIgnore
     private User user;
 
     @NotBlank
     private String idRecipe;
+
+    private String recipeName;
 
     @JsonIgnore
     private Recipe recipe;
@@ -47,9 +51,13 @@ public class TransactionDto {
 
     public TransactionDto(TxTransaction txTransaction, List<TxTransactionCheckout> ingredient) {
         this.id = txTransaction.getId();
-        this.idUser = txTransaction.getIdUser();;
+        this.idUser = txTransaction.getIdUser();
+        System.out.println(txTransaction.getUser());
+        System.out.println(txTransaction.getRecipe());
+        this.name = txTransaction.getUser().getFullName();
         this.user = txTransaction.getUser();
         this.idRecipe = txTransaction.getIdRecipe();
+        this.recipeName = txTransaction.getRecipe().getName();
         this.recipe = txTransaction.getRecipe();
         this.recipeStat = txTransaction.getRecipeStat();
         this.total = txTransaction.getTotal();
@@ -75,6 +83,22 @@ public class TransactionDto {
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
     }
 
     public User getUser() {
