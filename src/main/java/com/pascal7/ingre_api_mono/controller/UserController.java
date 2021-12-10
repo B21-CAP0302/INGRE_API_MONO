@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestPart User user, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
+    public ResponseStat createUser(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("user");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestPart User user, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
+    public ResponseStat createAdmin(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("admin");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestPart User user, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
+    public User updateProfile(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         return userService.updateWithFile(user, multipartFile);
     }
 }

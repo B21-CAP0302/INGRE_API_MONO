@@ -18,7 +18,7 @@ public class RecipeController {
     RecipeService recipeService;
 
     @PostMapping("/api/admin/product/recipe")
-    public RecipeDto postRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
+    public RecipeDto postRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         recipeDto.setDate(new Timestamp(System.currentTimeMillis()));
         return recipeService.createWithFile(recipeDto, multipartFile);
     }
@@ -39,7 +39,7 @@ public class RecipeController {
     }
 
     @PutMapping("/api/admin/product/recipe")
-    public RecipeDto updateRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
+    public RecipeDto updateRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         return recipeService.updateWithFile(recipeDto, multipartFile);
     }
 
