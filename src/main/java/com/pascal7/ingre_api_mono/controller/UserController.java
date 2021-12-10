@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pascal7.ingre_api_mono.custom.ResponseStat;
 import com.pascal7.ingre_api_mono.entity.User;
 import com.pascal7.ingre_api_mono.custom.CustomerCredentials;
@@ -8,8 +9,11 @@ import com.pascal7.ingre_api_mono.custom.VerificationStat;
 import com.pascal7.ingre_api_mono.service.UserService;
 import com.pascal7.ingre_api_mono.utils.BankString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 @RestController
@@ -17,6 +21,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @PostMapping("/api/auth/login")
     public TokenResponse login(@RequestBody CustomerCredentials customerCredentials){
@@ -33,20 +40,20 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestBody User user){
+    public ResponseStat createUser(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("user");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        userService.create(user);
+        userService.createWithFile(user, multipartFile);
         return new ResponseStat(user.getId(), BankString.success);
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestBody User user){
+    public ResponseStat createAdmin(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("admin");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        userService.create(user);
+        userService.createWithFile(user, multipartFile);
         return new ResponseStat(user.getId(), BankString.success);
     }
 
@@ -56,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestBody User user){
-        return userService.update(user);
+    public User updateProfile(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+        return userService.updateWithFile(user, multipartFile);
     }
 }

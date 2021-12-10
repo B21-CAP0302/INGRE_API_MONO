@@ -8,4 +8,5 @@ public interface TxTransactionService extends CRUDServiceTemplate<TransactionDto
     TransactionDto checkTransactionStatusToOnDelivery(String id);
     TransactionDto checkTransactionStatusToDone(String id);
     List<TransactionDto> getUserTransaction(String id);
+    TransactionDto getTransactionById(String userId, String id);
 }

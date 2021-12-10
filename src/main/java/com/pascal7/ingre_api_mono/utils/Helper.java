@@ -18,4 +18,11 @@ public class Helper {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.idMustNotNull);
         }
     }
+
+    public void validateFileExtension(String ext){
+        ext = ext.toUpperCase();
+        if(!((ext.equals("JPG")) || (ext.equals("PNG") || (ext.equals("JPEG"))))){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, BankString.accessDenied);
+        }
+    }
 }
