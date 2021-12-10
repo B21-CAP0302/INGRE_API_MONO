@@ -3,6 +3,7 @@ package com.pascal7.ingre_api_mono.controller;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
 import com.pascal7.ingre_api_mono.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +18,7 @@ public class RecipeController {
     RecipeService recipeService;
 
     @PostMapping("/api/admin/product/recipe")
-    public RecipeDto postRecipe(@RequestPart RecipeDto recipeDto, @RequestPart MultipartFile multipartFile) throws IOException {
+    public RecipeDto postRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
         recipeDto.setDate(new Timestamp(System.currentTimeMillis()));
         return recipeService.createWithFile(recipeDto, multipartFile);
     }
@@ -38,7 +39,7 @@ public class RecipeController {
     }
 
     @PutMapping("/api/admin/product/recipe")
-    public RecipeDto updateRecipe(@RequestPart RecipeDto recipeDto, @RequestPart MultipartFile multipartFile) throws IOException {
+    public RecipeDto updateRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
         return recipeService.updateWithFile(recipeDto, multipartFile);
     }
 

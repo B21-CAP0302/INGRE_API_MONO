@@ -14,6 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ImageEntityService implements CRUDServiceTemplate<ImageEntity>{
@@ -30,6 +31,10 @@ public class ImageEntityService implements CRUDServiceTemplate<ImageEntity>{
         return imageEntityRepository.save(imageEntity);
     }
 
+    public Optional<ImageEntity> getByIdOptional(String id){
+        return imageEntityRepository.findBySourceId(id);
+    }
+
     @Override
     public ImageEntity getById(String id) {
         validateIdIsExist(id);
@@ -38,7 +43,7 @@ public class ImageEntityService implements CRUDServiceTemplate<ImageEntity>{
 
     public ImageEntity getBySourceId(String id){
         validateSourceIdIsExist(id);
-        return imageEntityRepository.findBySourceId(id).get();
+        return getByIdOptional(id).get();
     }
 
     private void validateIdIsExist(String id) {
@@ -48,7 +53,7 @@ public class ImageEntityService implements CRUDServiceTemplate<ImageEntity>{
     }
 
     private void validateSourceIdIsExist(String id) {
-        if(!imageEntityRepository.findBySourceId(id).isPresent()){
+        if(!getByIdOptional(id).isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.idDidNotExist);
         }
     }

@@ -9,6 +9,7 @@ import com.pascal7.ingre_api_mono.custom.VerificationStat;
 import com.pascal7.ingre_api_mono.service.UserService;
 import com.pascal7.ingre_api_mono.utils.BankString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @PostMapping("/api/auth/login")
     public TokenResponse login(@RequestBody CustomerCredentials customerCredentials){
@@ -36,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestPart User user, @RequestPart MultipartFile multipartFile) throws IOException {
+    public ResponseStat createUser(@RequestPart User user, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("user");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
@@ -45,11 +49,10 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestPart User user, @RequestPart MultipartFile multipartFile) throws IOException {
+    public ResponseStat createAdmin(@RequestPart User user, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
         user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         user.setRole("admin");
         user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        System.out.println(user);
         userService.createWithFile(user, multipartFile);
         return new ResponseStat(user.getId(), BankString.success);
     }
@@ -60,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestPart User user, @RequestPart MultipartFile multipartFile) throws IOException {
+    public User updateProfile(@RequestPart User user, @Nullable @RequestPart MultipartFile multipartFile) throws IOException {
         return userService.updateWithFile(user, multipartFile);
     }
 }

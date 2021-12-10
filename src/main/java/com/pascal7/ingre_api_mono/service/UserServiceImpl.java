@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.service;
 
+import com.pascal7.ingre_api_mono.entity.ImageEntity;
 import com.pascal7.ingre_api_mono.entity.User;
 import com.pascal7.ingre_api_mono.custom.CustomerCredentials;
 import com.pascal7.ingre_api_mono.custom.TokenResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -113,21 +115,37 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createWithFile(User user, MultipartFile multipartFile) throws IOException {
         user = create(user);
-        if(!multipartFile.isEmpty()){
-            imageEntityService.addMultipartFile(user.getId(), multipartFile);
-            user.setPhoto(BankString.fileApi + user.getId());
-        }
+        buildUser(user, multipartFile);
         return update(user);
     }
 
     @Override
     public User updateWithFile(User user, MultipartFile multipartFile) throws IOException {
         user = update(user);
+        buildUser(user, multipartFile);
+        System.out.println(user);
+        return update(user);
+    }
+
+    private void buildUser(User user, MultipartFile multipartFile) throws IOException {
+        if(multipartFile != null){
+            setUserWithFile(user, multipartFile);
+        } else {
+            setUserWithoutFile(user);
+        }
+    }
+
+    private void setUserWithFile(User user, MultipartFile multipartFile) throws IOException {
         if(!multipartFile.isEmpty()){
             imageEntityService.addMultipartFile(user.getId(), multipartFile);
             user.setPhoto(BankString.fileApi + user.getId());
         }
-        return update(user);
+    }
+
+    private void setUserWithoutFile(User user) {
+        Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(user.getId());
+        imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
+        user.setPhoto(null);
     }
 
     private void validateIdAndItsRole(String username, String authority) {

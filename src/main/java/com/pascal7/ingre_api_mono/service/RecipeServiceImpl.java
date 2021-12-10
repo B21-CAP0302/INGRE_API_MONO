@@ -2,9 +2,7 @@ package com.pascal7.ingre_api_mono.service;
 
 import com.pascal7.ingre_api_mono.custom.IngredientDto;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
-import com.pascal7.ingre_api_mono.entity.Recipe;
-import com.pascal7.ingre_api_mono.entity.RecipeDetail;
-import com.pascal7.ingre_api_mono.entity.TxIngredientRecipe;
+import com.pascal7.ingre_api_mono.entity.*;
 import com.pascal7.ingre_api_mono.repository.RecipeRepository;
 import com.pascal7.ingre_api_mono.utils.BankString;
 import com.pascal7.ingre_api_mono.utils.Helper;
@@ -18,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -183,20 +182,35 @@ public class RecipeServiceImpl implements RecipeService{
     @Override
     public RecipeDto createWithFile(RecipeDto recipeDto, MultipartFile multipartFile) throws IOException {
         recipeDto = create(recipeDto);
-        if(!multipartFile.isEmpty()){
-            imageEntityService.addMultipartFile(recipeDto.getId(), multipartFile);
-            recipeDto.setPhoto(BankString.fileApi+ recipeDto.getId());
-        }
+        buildRecipe(recipeDto, multipartFile);
         return update(recipeDto);
     }
 
     @Override
     public RecipeDto updateWithFile(RecipeDto recipeDto, MultipartFile multipartFile) throws IOException {
         recipeDto = update(recipeDto);
-        if(!multipartFile.isEmpty()){
-            imageEntityService.addMultipartFile(recipeDto.getId(), multipartFile);
-            recipeDto.setPhoto(BankString.fileApi + recipeDto.getId());
-        }
+        buildRecipe(recipeDto, multipartFile);
         return update(recipeDto);
+    }
+
+    private void buildRecipe(RecipeDto recipe, MultipartFile multipartFile) throws IOException {
+        if(multipartFile != null){
+            setRecipeWithFile(recipe, multipartFile);
+        } else {
+            setRecipeWithoutFile(recipe);
+        }
+    }
+
+    private void setRecipeWithFile(RecipeDto recipe, MultipartFile multipartFile) throws IOException {
+        if(!multipartFile.isEmpty()){
+            imageEntityService.addMultipartFile(recipe.getId(), multipartFile);
+            recipe.setPhoto(BankString.fileApi + recipe.getId());
+        }
+    }
+
+    private void setRecipeWithoutFile(RecipeDto recipe) {
+        Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(recipe.getId());
+        imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
+        recipe.setPhoto(null);
     }
 }
