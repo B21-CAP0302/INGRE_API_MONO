@@ -1,12 +1,12 @@
 package com.pascal7.ingre_api_mono.controller;
 
-import com.pascal7.ingre_api_mono.custom.Category;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
-import com.pascal7.ingre_api_mono.entity.Recipe;
 import com.pascal7.ingre_api_mono.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -17,9 +17,9 @@ public class RecipeController {
     RecipeService recipeService;
 
     @PostMapping("/api/admin/product/recipe")
-    public RecipeDto postRecipe(@RequestBody RecipeDto recipeDto){
+    public RecipeDto postRecipe(@RequestPart RecipeDto recipeDto, @RequestPart MultipartFile multipartFile) throws IOException {
         recipeDto.setDate(new Timestamp(System.currentTimeMillis()));
-        return recipeService.create(recipeDto);
+        return recipeService.createWithFile(recipeDto, multipartFile);
     }
 
     @GetMapping("/api/product/recipe")
@@ -32,19 +32,14 @@ public class RecipeController {
         return recipeService.getById(id);
     }
 
-    @GetMapping("/api/product/categories")
-    public List<Category> getCategories(){
-        return recipeService.categories();
-    }
-
     @GetMapping("/api/product/recipe/category")
     public List<RecipeDto> getRecipeByCategory(@RequestParam String name){
         return recipeService.recipeByCategory(name);
     }
 
     @PutMapping("/api/admin/product/recipe")
-    public RecipeDto updateRecipe(@RequestBody RecipeDto recipeDto){
-        return recipeService.update(recipeDto);
+    public RecipeDto updateRecipe(@RequestPart RecipeDto recipeDto, @RequestPart MultipartFile multipartFile) throws IOException {
+        return recipeService.updateWithFile(recipeDto, multipartFile);
     }
 
     @DeleteMapping("/api/admin/product/recipe/{id}")

@@ -13,4 +13,6 @@ public class BankString {
     public static final String nameAlreadyExist = "Name Already Exist";
     public static final String totalDidNotMatch = "Total Did Not Match";
     public static final String statusIsNotAccepted = "Status Is Not Accepted";
+    public static final String fileApi = "localhost:8080/api/product/image/";
+    public static final String accessDenied = "access denied";
 }

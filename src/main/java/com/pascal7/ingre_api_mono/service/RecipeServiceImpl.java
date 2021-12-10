@@ -1,7 +1,5 @@
 package com.pascal7.ingre_api_mono.service;
 
-import com.pascal7.ingre_api_mono.custom.Category;
-import com.pascal7.ingre_api_mono.custom.CategoryEnum;
 import com.pascal7.ingre_api_mono.custom.IngredientDto;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
 import com.pascal7.ingre_api_mono.entity.Recipe;
@@ -13,10 +11,11 @@ import com.pascal7.ingre_api_mono.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +37,9 @@ public class RecipeServiceImpl implements RecipeService{
 
     @Autowired
     RecipeDetailServiceImpl recipeDetailService;
+
+    @Autowired
+    ImageEntityService imageEntityService;
 
     @Override
     public RecipeDto create(RecipeDto recipeDto) {
@@ -160,15 +162,6 @@ public class RecipeServiceImpl implements RecipeService{
     }
 
     @Override
-    public List<Category> categories() {
-        List<Category> categories = new ArrayList<>();
-        Arrays.stream(CategoryEnum.values()).forEach(categoryEnum -> {
-           categories.add(new Category(categoryEnum.getValue()));
-        });
-        return categories;
-    }
-
-    @Override
     public List<RecipeDto> recipeByCategory(String category) {
         List<RecipeDto> recipeDtos = new ArrayList<>();
         recipeRepository.findByCategory(category).forEach(
@@ -185,5 +178,25 @@ public class RecipeServiceImpl implements RecipeService{
                 }
         );
         return recipeDtos;
+    }
+
+    @Override
+    public RecipeDto createWithFile(RecipeDto recipeDto, MultipartFile multipartFile) throws IOException {
+        recipeDto = create(recipeDto);
+        if(!multipartFile.isEmpty()){
+            imageEntityService.addMultipartFile(recipeDto.getId(), multipartFile);
+            recipeDto.setPhoto(BankString.fileApi+ recipeDto.getId());
+        }
+        return update(recipeDto);
+    }
+
+    @Override
+    public RecipeDto updateWithFile(RecipeDto recipeDto, MultipartFile multipartFile) throws IOException {
+        recipeDto = update(recipeDto);
+        if(!multipartFile.isEmpty()){
+            imageEntityService.addMultipartFile(recipeDto.getId(), multipartFile);
+            recipeDto.setPhoto(BankString.fileApi + recipeDto.getId());
+        }
+        return update(recipeDto);
     }
 }

@@ -13,8 +13,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -34,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    ImageEntityService imageEntityService;
 
     @Override
     public User create(User user) {
@@ -103,6 +108,26 @@ public class UserServiceImpl implements UserService {
                 userDetailService.getUserByUsername(userDetails.getUsername()).getId(),
                 jwtUtils.generateToken(userDetails, 60)
         );
+    }
+
+    @Override
+    public User createWithFile(User user, MultipartFile multipartFile) throws IOException {
+        user = create(user);
+        if(!multipartFile.isEmpty()){
+            imageEntityService.addMultipartFile(user.getId(), multipartFile);
+            user.setPhoto(BankString.fileApi + user.getId());
+        }
+        return update(user);
+    }
+
+    @Override
+    public User updateWithFile(User user, MultipartFile multipartFile) throws IOException {
+        user = update(user);
+        if(!multipartFile.isEmpty()){
+            imageEntityService.addMultipartFile(user.getId(), multipartFile);
+            user.setPhoto(BankString.fileApi + user.getId());
+        }
+        return update(user);
     }
 
     private void validateIdAndItsRole(String username, String authority) {

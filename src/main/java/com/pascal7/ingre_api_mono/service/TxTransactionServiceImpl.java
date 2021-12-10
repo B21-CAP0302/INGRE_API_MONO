@@ -119,6 +119,12 @@ public class TxTransactionServiceImpl implements TxTransactionService {
         return transactionDtos;
     }
 
+    @Override
+    public TransactionDto getTransactionById(String userId, String id) {
+        userService.getById(userId);
+        return getById(id);
+    }
+
     private void setTransactionDto(TransactionDto transactionDto, TxTransaction txTransaction) {
         transactionDto.setId(txTransaction.getId());
         transactionDto.setRecipeName(txTransaction.getRecipe().getName());

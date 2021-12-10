@@ -52,8 +52,6 @@ public class TransactionDto {
     public TransactionDto(TxTransaction txTransaction, List<TxTransactionCheckout> ingredient) {
         this.id = txTransaction.getId();
         this.idUser = txTransaction.getIdUser();
-        System.out.println(txTransaction.getUser());
-        System.out.println(txTransaction.getRecipe());
         this.name = txTransaction.getUser().getFullName();
         this.user = txTransaction.getUser();
         this.idRecipe = txTransaction.getIdRecipe();
