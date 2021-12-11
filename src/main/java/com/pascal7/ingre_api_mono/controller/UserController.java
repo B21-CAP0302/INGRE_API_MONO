@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pascal7.ingre_api_mono.custom.ResponseStat;
 import com.pascal7.ingre_api_mono.entity.User;
@@ -37,23 +38,25 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestBody User user) {
-        user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
-        user.setRole("user");
-        user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        user.setPhoto(BankString.photo);
-        userService.create(user);
-        return new ResponseStat(user.getId(), BankString.success);
+    public ResponseStat createUser(@RequestPart String user) throws JsonProcessingException {
+        User customer = objectMapper.readValue(user, User.class);
+        customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
+        customer.setRole("user");
+        customer.setDateCreated(new Timestamp(System.currentTimeMillis()));
+        customer.setPhoto(BankString.photo);
+        userService.create(customer);
+        return new ResponseStat(customer.getId(), BankString.success);
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestBody User user) {
-        user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
-        user.setRole("admin");
-        user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        user.setPhoto(BankString.photo);
-        userService.create(user);
-        return new ResponseStat(user.getId(), BankString.success);
+    public ResponseStat createAdmin(@RequestPart String user) throws JsonProcessingException {
+        User customer = objectMapper.readValue(user, User.class);
+        customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
+        customer.setRole("admin");
+        customer.setDateCreated(new Timestamp(System.currentTimeMillis()));
+        customer.setPhoto(BankString.photo);
+        userService.create(customer);
+        return new ResponseStat(customer.getId(), BankString.success);
     }
 
     @GetMapping("/api/user/profile/{id}")
@@ -62,8 +65,9 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestBody User user) {
-        user.setPhoto(BankString.photo);
-        return userService.update(user);
+    public User updateProfile(@RequestPart String user) throws JsonProcessingException {
+        User customer = objectMapper.readValue(user, User.class);
+        customer.setPhoto(BankString.photo);
+        return userService.update(customer);
     }
 }
