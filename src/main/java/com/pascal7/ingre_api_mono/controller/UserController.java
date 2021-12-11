@@ -40,21 +40,23 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
-        user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
-        user.setRole("user");
-        user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        userService.createWithFile(user, multipartFile);
-        return new ResponseStat(user.getId(), BankString.success);
+    public ResponseStat createUser(@RequestPart String user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+        User customer = objectMapper.readValue(user, User.class);
+        customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
+        customer.setRole("user");
+        customer.setDateCreated(new Timestamp(System.currentTimeMillis()));
+        userService.createWithFile(customer, multipartFile);
+        return new ResponseStat(customer.getId(), BankString.success);
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
-        user.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
-        user.setRole("admin");
-        user.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        userService.createWithFile(user, multipartFile);
-        return new ResponseStat(user.getId(), BankString.success);
+    public ResponseStat createAdmin(@RequestPart String user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+        User customer = objectMapper.readValue(user, User.class);
+        customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
+        customer.setRole("admin");
+        customer.setDateCreated(new Timestamp(System.currentTimeMillis()));
+        userService.createWithFile(customer, multipartFile);
+        return new ResponseStat(customer.getId(), BankString.success);
     }
 
     @GetMapping("/api/user/profile/{id}")
@@ -63,7 +65,8 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestPart User user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
-        return userService.updateWithFile(user, multipartFile);
+    public User updateProfile(@RequestPart String user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+        User customer = objectMapper.readValue(user, User.class);
+        return userService.updateWithFile(customer, multipartFile);
     }
 }
