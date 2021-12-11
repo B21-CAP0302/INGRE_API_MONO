@@ -36,20 +36,18 @@ class UserEntityTest {
     }
 
     @Test
-    void getBirthDate_shouldReturnNotNull_when_userCreatedAndBirthDateAssigned() throws ParseException {
+    void getBirthDate_shouldReturnNotNull_when_userCreatedAndBirthDateAssigned(){
         User user = new User();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        user.setBirthDate(new Timestamp(sdf.parse("1997-28-04").getTime()));
+        user.setBirthDate("1997-28-04");
         assertNotNull(user.getBirthDate());
     }
 
     @Test
-    void getBirthDate_shouldReturnSameString_when_userCreatedAndBirthDateAssigned() throws ParseException {
+    void getBirthDate_shouldReturnSameString_when_userCreatedAndBirthDateAssigned() {
         User user = new User();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = "1997-04-28";
-        user.setBirthDate(new Timestamp(sdf.parse(date).getTime()));
-        assertEquals(date, sdf.format(user.getBirthDate()));
+        user.setBirthDate(date);
+        assertEquals(date, user.getBirthDate());
     }
 
     @Test
