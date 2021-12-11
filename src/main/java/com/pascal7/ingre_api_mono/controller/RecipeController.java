@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
 import com.pascal7.ingre_api_mono.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,14 @@ public class RecipeController {
     @Autowired
     RecipeService recipeService;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @PostMapping("/api/admin/product/recipe")
-    public RecipeDto postRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
-        recipeDto.setDate(new Timestamp(System.currentTimeMillis()));
-        return recipeService.createWithFile(recipeDto, multipartFile);
+    public RecipeDto postRecipe(@RequestPart String recipeDto, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+        RecipeDto recipe = objectMapper.readValue(recipeDto, RecipeDto.class);
+        recipe.setDate(new Timestamp(System.currentTimeMillis()));
+        return recipeService.createWithFile(recipe, multipartFile);
     }
 
     @GetMapping("/api/product/recipe")
@@ -39,8 +44,9 @@ public class RecipeController {
     }
 
     @PutMapping("/api/admin/product/recipe")
-    public RecipeDto updateRecipe(@RequestPart RecipeDto recipeDto, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
-        return recipeService.updateWithFile(recipeDto, multipartFile);
+    public RecipeDto updateRecipe(@RequestPart String recipeDto, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+        RecipeDto recipe = objectMapper.readValue(recipeDto, RecipeDto.class);
+        return recipeService.updateWithFile(recipe, multipartFile);
     }
 
     @DeleteMapping("/api/admin/product/recipe/{id}")
