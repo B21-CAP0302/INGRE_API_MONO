@@ -86,7 +86,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!--suppress UnresolvedMavenProperty -->
                     <jvmArguments>${argLine}</jvmArguments>
                 </configuration>
                 <executions>
