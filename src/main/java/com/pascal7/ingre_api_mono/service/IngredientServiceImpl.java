@@ -25,7 +25,14 @@ public class IngredientServiceImpl implements IngredientService{
         helper.validateIdIsNull(ingredient.getId());
         validateNameIsNotExist(ingredient.getName());
         validateStockIsNotMinus(ingredient.getStock());
+        validatePriceIsNotMinus(ingredient.getPrice());
         return ingredientRepository.save(ingredient);
+    }
+
+    private void validatePriceIsNotMinus(Integer price) {
+        if(price <= 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "price is not valid");
+        }
     }
 
     private void validateNameIsNotExist(String name) {
@@ -52,6 +59,7 @@ public class IngredientServiceImpl implements IngredientService{
         helper.validateIdIsNotNull(ingredient.getId());
         validateIdIsExist(ingredient.getId());
         validateStockIsNotMinus(ingredient.getStock());
+        validatePriceIsNotMinus(ingredient.getPrice());
         ingredient.setDate(getById(ingredient.getId()).getDate());
         return ingredientRepository.save(ingredient);
     }
