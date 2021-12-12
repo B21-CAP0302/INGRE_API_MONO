@@ -10,8 +10,11 @@ import com.pascal7.ingre_api_mono.custom.VerificationStat;
 import com.pascal7.ingre_api_mono.service.UserService;
 import com.pascal7.ingre_api_mono.utils.BankString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 @RestController
@@ -38,24 +41,22 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestPart String user) throws JsonProcessingException {
+    public ResponseStat createUser(@RequestPart String user, @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         customer.setRole("user");
         customer.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        customer.setPhoto(BankString.photo);
-        userService.create(customer);
+        userService.createWithFile(customer, multipartFile);
         return new ResponseStat(customer.getId(), BankString.success);
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestPart String user) throws JsonProcessingException {
+    public ResponseStat createAdmin(@RequestPart String user, @Nullable @RequestPart("upload")MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         customer.setRole("admin");
         customer.setDateCreated(new Timestamp(System.currentTimeMillis()));
-        customer.setPhoto(BankString.photo);
-        userService.create(customer);
+        userService.createWithFile(customer, multipartFile);
         return new ResponseStat(customer.getId(), BankString.success);
     }
 
@@ -65,9 +66,8 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestPart String user) throws JsonProcessingException {
+    public User updateProfile(@RequestPart String user, @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
-        customer.setPhoto(BankString.photo);
-        return userService.update(customer);
+        return userService.updateWithFile(customer, multipartFile);
     }
 }

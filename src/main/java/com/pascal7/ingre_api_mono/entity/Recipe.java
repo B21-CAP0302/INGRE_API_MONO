@@ -84,15 +84,4 @@ public class Recipe {
     public void setDetail(String detail) {
         this.detail = detail;
     }
-
-    @Override
-    public String toString() {
-        return "Recipe{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", category='" + category + '\'' +
-                ", photo='" + photo + '\'' +
-                '}';
-    }
 }

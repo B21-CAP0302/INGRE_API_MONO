@@ -8,17 +8,32 @@ class CategoryEntityTest {
 
     @Test
     void getId() {
+        Category category = new Category();
+        category.setId("123");
+        assertNotNull(category.getId());
     }
 
     @Test
-    void setId() {
+    void getId_() {
+        Category category = new Category();
+        String id = "321";
+        category.setId(id);
+        assertEquals(id, category.getId());
     }
 
     @Test
     void getCategory() {
+        Category category = new Category();
+        category.setCategory("food");
+        assertNotNull(category.getCategory());
     }
 
     @Test
-    void setCategory() {
+    void getCategory_() {
+        Category category = new Category();
+        String categoryString = "drink";
+        category.setCategory(categoryString);
+        assertEquals(categoryString, category.getCategory());
     }
+
 }
