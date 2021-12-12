@@ -15,4 +15,5 @@ public class BankString {
     public static final String statusIsNotAccepted = "Status Is Not Accepted";
     public static final String fileApi = "https://ingre-api-mono.herokuapp.com/api/product/image/";
     public static final String accessDenied = "access denied";
+    public static final String photo = "https://ingre-api-mono.herokuapp.com/api/product/image/2c92e0667da4b74c017da4b7d9b20000";
 }

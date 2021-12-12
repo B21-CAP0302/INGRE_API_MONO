@@ -44,8 +44,8 @@ public class RecipeServiceImpl implements RecipeService{
     public RecipeDto create(RecipeDto recipeDto) {
         helper.validateIdIsNull(recipeDto.getId());
         Recipe recipe = recipeRepository.save(new Recipe(recipeDto));
-        String recipeDetail = recipeDto.getRecipeDetail();
-        recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
+//        String recipeDetail = recipeDto.getRecipeDetail();
+//        recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
         saveTxIngredientRecipe(recipeDto, recipe);
         recipeDto.setId(recipe.getId());
         recipeDto.setIngredients(recipeDto.getIngredients()
@@ -96,11 +96,12 @@ public class RecipeServiceImpl implements RecipeService{
     public RecipeDto getById(String id) {
         validateIdIsExist(id);
         Recipe recipe = recipeRepository.getById(id);
-        StringBuilder detail = new StringBuilder();
-        for (RecipeDetail recipeDetail: recipeDetailService.getByRecipe(recipe)) {
-            detail.append(recipeDetail.getDetail());
-        }
-        return new RecipeDto(recipe, detail.toString(), txIngredientRecipeService.getByRecipe(recipe));
+//        StringBuilder detail = new StringBuilder();
+//        for (RecipeDetail recipeDetail: recipeDetailService.getByRecipe(recipe)) {
+//            detail.append(recipeDetail.getDetail());
+//        }
+//        return new RecipeDto(recipe, detail.toString(), txIngredientRecipeService.getByRecipe(recipe));
+        return new RecipeDto(recipe, txIngredientRecipeService.getByRecipe(recipe));
     }
 
     private void validateIdIsExist(String id) {
@@ -113,9 +114,9 @@ public class RecipeServiceImpl implements RecipeService{
     public RecipeDto update(RecipeDto recipeDto) {
         validateIdIsExist(recipeDto.getId());
         Recipe recipe = new Recipe(recipeDto);
-        deleteRecipeDetail(recipe);
-        String recipeDetail = recipeDto.getRecipeDetail();
-        recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
+//        deleteRecipeDetail(recipe);
+//        String recipeDetail = recipeDto.getRecipeDetail();
+//        recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
         deleteIngredientList(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipe.setDate(getById(recipe.getId()).getDate());
@@ -154,7 +155,7 @@ public class RecipeServiceImpl implements RecipeService{
     public void delete(String id) {
         validateIdIsExist(id);
         Recipe recipe = new Recipe(getById(id));
-        deleteRecipeDetail(recipe);
+//        deleteRecipeDetail(recipe);
         deleteIngredientList(recipe);
         recipeRepository.delete(recipe);
         throw new ResponseStatusException(HttpStatus.ACCEPTED, String.format(BankString.idDeleteFormat, id));
@@ -165,13 +166,13 @@ public class RecipeServiceImpl implements RecipeService{
         List<RecipeDto> recipeDtos = new ArrayList<>();
         recipeRepository.findByCategory(category).forEach(
                 recipe -> {
-                    StringBuilder detail = new StringBuilder();
-                    recipeDetailService.getByRecipe(recipe).forEach(
-                            recipeDetail -> detail.append(recipeDetail.getDetail())
-                    );
+//                    StringBuilder detail = new StringBuilder();
+//                    recipeDetailService.getByRecipe(recipe).forEach(
+//                            recipeDetail -> detail.append(recipeDetail.getDetail())
+//                    );
                     recipeDtos.add(new RecipeDto(
                             recipe,
-                            detail.toString(),
+//                            detail.toString(),
                             txIngredientRecipeService.getByRecipe(recipe))
                     );
                 }
