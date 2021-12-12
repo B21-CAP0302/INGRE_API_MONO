@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestPart String user, @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+    public ResponseStat createUser(@RequestPart String user,@Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         customer.setRole("user");
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestPart String user, @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+    public User updateProfile(@RequestPart String user,@Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         return userService.updateWithFile(customer, multipartFile);
     }
