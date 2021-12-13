@@ -78,13 +78,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) {
         User customer = getById(user.getId());
+        customer = customer.setUser(user);
         if(customer.getGender() == null){
             customer.setGender(user.getGender());
         }
         if(customer.getBirthDate() == null){
             customer.setBirthDate(user.getBirthDate());
         }
-        return userRepository.save(customer.setUser(user));
+        return userRepository.save(customer);
     }
 
     @Override

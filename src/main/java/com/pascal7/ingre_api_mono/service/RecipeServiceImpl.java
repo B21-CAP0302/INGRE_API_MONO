@@ -181,6 +181,6 @@ public class RecipeServiceImpl implements RecipeService{
     private void setRecipeWithoutFile(RecipeDto recipe) {
         Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(recipe.getId());
         imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
-        recipe.setPhoto(null);
+//        recipe.setPhoto(null);
     }
 }
