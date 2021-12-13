@@ -41,6 +41,7 @@ public class RecipeServiceImpl implements RecipeService{
         helper.validateIdIsNull(recipeDto.getId());
         Recipe recipe = new Recipe(recipeDto);
         setPhotoIfExist(recipeDto, recipe);
+//        System.out.println(recipe.getPhoto());
         recipe = recipeRepository.save(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipeDto.setId(recipe.getId());
@@ -106,12 +107,13 @@ public class RecipeServiceImpl implements RecipeService{
         deleteIngredientList(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipe.setDate(getById(recipe.getId()).getDate());
-        recipeDto.setId(recipeRepository.save(recipe).getId());
+        recipe = recipeRepository.save(recipe);
+        recipeDto.setId(recipe.getId());
         return recipeDto;
     }
 
     private void setPhotoIfExist(RecipeDto recipeDto, Recipe recipe) {
-        if(!recipeDto.getPhoto().isEmpty()){
+        if(!(recipeDto.getPhoto() == null)){
             recipe.setPhoto(recipeDto.getPhoto());
         }
     }
