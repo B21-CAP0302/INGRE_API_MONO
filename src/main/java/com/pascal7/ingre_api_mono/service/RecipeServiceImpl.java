@@ -177,19 +177,18 @@ public class RecipeServiceImpl implements RecipeService{
     private void buildRecipe(RecipeDto recipe, MultipartFile multipartFile) throws IOException {
         if(multipartFile != null){
             setRecipeWithFile(recipe, multipartFile);
-        } else {
-            setRecipeWithoutFile(recipe);
         }
     }
 
     private void setRecipeWithFile(RecipeDto recipe, MultipartFile multipartFile) throws IOException {
         if(!multipartFile.isEmpty()){
+            deleteImageRecipe(recipe);
             imageEntityService.addMultipartFile(recipe.getId(), multipartFile);
             recipe.setPhoto(BankString.fileApi + recipe.getId());
         }
     }
 
-    private void setRecipeWithoutFile(RecipeDto recipe) {
+    private void deleteImageRecipe(RecipeDto recipe) {
         Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(recipe.getId());
         imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
     }
