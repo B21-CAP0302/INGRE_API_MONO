@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface IngredientRepository extends JpaRepository<Ingredient, String>, JpaSpecificationExecutor<Ingredient> {
     Optional<Ingredient> findByName(String name);
+    Optional<Ingredient> findByNameAndPriceAndStock(String name, Integer price, Integer stock);
 }

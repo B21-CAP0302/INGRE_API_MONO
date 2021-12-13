@@ -26,7 +26,14 @@ public class IngredientServiceImpl implements IngredientService{
         validateNameIsNotExist(ingredient.getName());
         validateStockIsNotMinus(ingredient.getStock());
         validatePriceIsNotMinus(ingredient.getPrice());
+        validateIngredientFieldDidNotExist(ingredient.getName(), ingredient.getPrice(), ingredient.getStock());
         return ingredientRepository.save(ingredient);
+    }
+
+    private void validateIngredientFieldDidNotExist(String name, Integer price, Integer stock) {
+        if(ingredientRepository.findByNameAndPriceAndStock(name, price, stock).isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.accessDenied);
+        }
     }
 
     private void validatePriceIsNotMinus(Integer price) {
@@ -60,6 +67,7 @@ public class IngredientServiceImpl implements IngredientService{
         validateIdIsExist(ingredient.getId());
         validateStockIsNotMinus(ingredient.getStock());
         validatePriceIsNotMinus(ingredient.getPrice());
+        validateIngredientFieldDidNotExist(ingredient.getName(), ingredient.getPrice(), ingredient.getStock());
         ingredient.setDate(getById(ingredient.getId()).getDate());
         return ingredientRepository.save(ingredient);
     }

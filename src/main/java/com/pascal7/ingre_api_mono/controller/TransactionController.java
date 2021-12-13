@@ -63,6 +63,18 @@ public class TransactionController {
         return new ResponseStat(id, BankString.success);
     }
 
+    @PutMapping("/api/admin/transaction/deliver/cancel/{id}")
+    public ResponseStat deliveryCancel(@PathVariable String id){
+        txTransactionService.cancelTransactionStatusFromOnDelivery(id);
+        return new ResponseStat(id, BankString.success);
+    }
+
+    @PutMapping("/api/admin/transaction/done/cancel/{id}")
+    public ResponseStat doneCancel(@PathVariable String id){
+        txTransactionService.cancelTransactionStatusFromDone(id);
+        return new ResponseStat(id, BankString.success);
+    }
+
     @DeleteMapping("/api/admin/transaction/{id}")
     public void deleteTransaction(@PathVariable String id){
         txTransactionService.delete(id);

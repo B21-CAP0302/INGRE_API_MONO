@@ -18,6 +18,9 @@ public class CategoryService {
     CategoryRepository categoryRepository;
 
     @Autowired
+    RecipeService recipeService;
+
+    @Autowired
     Helper helper;
 
     public Category create(Category category) {
@@ -46,7 +49,12 @@ public class CategoryService {
     }
 
     public void delete(String id) {
-        categoryRepository.delete(getById(id));
-        throw new ResponseStatusException(HttpStatus.ACCEPTED, BankString.success);
+        Category category = getById(id);
+        if(recipeService.recipeByCategory(category.getCategory()).isEmpty()) {
+            categoryRepository.delete(category);
+            throw new ResponseStatusException(HttpStatus.ACCEPTED, BankString.success);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.failed);
+        }
     }
 }
