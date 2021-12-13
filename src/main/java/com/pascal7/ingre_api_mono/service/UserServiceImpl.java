@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
     private void setUserWithoutFile(User user) {
         Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(user.getId());
         imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
-        if(user.getPhoto().isEmpty()){
+        if(user.getPhoto() == null){
             user.setPhoto(BankString.photo);
         }
     }

@@ -41,6 +41,8 @@ public class User {
         this.address = user.getAddress();
         this.phoneNumber = user.getPhoneNumber();
         this.photo = user.getPhoto();
+        this.gender = user.getGender() == null ? "" : user.getGender();
+        this.birthDate = user.getBirthDate() == null ? "" : user.getBirthDate();
         return this;
     }
 
