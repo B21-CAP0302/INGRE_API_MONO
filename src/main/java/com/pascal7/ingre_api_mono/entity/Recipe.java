@@ -37,7 +37,6 @@ public class Recipe {
         this.name = recipeDto.getName();
         this.date = recipeDto.getDate();
         this.category = recipeDto.getCategory();
-        this.photo = recipeDto.getPhoto();
         this.detail = recipeDto.getRecipeDetail();
     }
 

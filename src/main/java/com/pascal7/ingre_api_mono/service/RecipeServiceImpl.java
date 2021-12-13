@@ -39,7 +39,9 @@ public class RecipeServiceImpl implements RecipeService{
     @Override
     public RecipeDto create(RecipeDto recipeDto) {
         helper.validateIdIsNull(recipeDto.getId());
-        Recipe recipe = recipeRepository.save(new Recipe(recipeDto));
+        Recipe recipe = new Recipe(recipeDto);
+        setPhotoIfExist(recipeDto, recipe);
+        recipe = recipeRepository.save(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipeDto.setId(recipe.getId());
         recipeDto.setIngredients(recipeDto.getIngredients()
@@ -100,11 +102,18 @@ public class RecipeServiceImpl implements RecipeService{
     public RecipeDto update(RecipeDto recipeDto) {
         validateIdIsExist(recipeDto.getId());
         Recipe recipe = new Recipe(recipeDto);
+        setPhotoIfExist(recipeDto, recipe);
         deleteIngredientList(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipe.setDate(getById(recipe.getId()).getDate());
         recipeDto.setId(recipeRepository.save(recipe).getId());
         return recipeDto;
+    }
+
+    private void setPhotoIfExist(RecipeDto recipeDto, Recipe recipe) {
+        if(!recipeDto.getPhoto().isEmpty()){
+            recipe.setPhoto(recipeDto.getPhoto());
+        }
     }
 
     private void deleteIngredientList(Recipe recipe) {
@@ -181,6 +190,5 @@ public class RecipeServiceImpl implements RecipeService{
     private void setRecipeWithoutFile(RecipeDto recipe) {
         Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(recipe.getId());
         imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
-//        recipe.setPhoto(null);
     }
 }
