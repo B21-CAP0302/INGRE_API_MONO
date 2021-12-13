@@ -79,10 +79,10 @@ public class UserServiceImpl implements UserService {
     public User update(User user) {
         User customer = getById(user.getId());
         customer = customer.setUser(user);
-        if(customer.getGender() == null){
+        if(customer.getGender().isEmpty()){
             customer.setGender(user.getGender());
         }
-        if(customer.getBirthDate() == null){
+        if(customer.getBirthDate().isEmpty()){
             customer.setBirthDate(user.getBirthDate());
         }
         return userRepository.save(customer);
@@ -146,7 +146,9 @@ public class UserServiceImpl implements UserService {
     private void setUserWithoutFile(User user) {
         Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(user.getId());
         imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
-        user.setPhoto(BankString.photo);
+        if(user.getPhoto().isEmpty()){
+            user.setPhoto(BankString.photo);
+        }
     }
 
     private void validateIdAndItsRole(String username, String authority) {
