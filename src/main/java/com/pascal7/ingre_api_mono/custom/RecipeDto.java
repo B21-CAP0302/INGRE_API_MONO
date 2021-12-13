@@ -30,6 +30,7 @@ public class RecipeDto {
         this.id = recipe.getId();
         this.name = recipe.getName();
         this.date = recipe.getDate();
+        this.photo = recipe.getPhoto();
         this.recipeDetail = recipe.getDetail();
         this.category = recipe.getCategory();
         ingredients.forEach(

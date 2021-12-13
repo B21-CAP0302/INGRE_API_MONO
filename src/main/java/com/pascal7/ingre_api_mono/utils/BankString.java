@@ -14,6 +14,7 @@ public class BankString {
     public static final String totalDidNotMatch = "Total Did Not Match";
     public static final String statusIsNotAccepted = "Status Is Not Accepted";
     public static final String fileApi = "https://ingre-api-mono.herokuapp.com/api/product/image/";
+//    public static final String fileApi = "http://10.10.50.83:8080/api/product/image/";
     public static final String accessDenied = "access denied";
     public static final String photo = "https://ingre-api-mono.herokuapp.com/api/product/image/2c9388ca7daed568017daed82ee20000";
 }
