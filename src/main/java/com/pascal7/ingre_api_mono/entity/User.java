@@ -28,7 +28,7 @@ public class User {
     private String address;
     private String gender;
     private String phoneNumber;
-    private Timestamp birthDate;
+    private String birthDate;
     private Timestamp dateCreated;
     private String role;
     private String verificationStat;
@@ -41,6 +41,8 @@ public class User {
         this.address = user.getAddress();
         this.phoneNumber = user.getPhoneNumber();
         this.photo = user.getPhoto();
+        this.gender = user.getGender() == null ? "" : user.getGender();
+        this.birthDate = user.getBirthDate() == null ? "" : user.getBirthDate();
         return this;
     }
 
@@ -52,11 +54,11 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public Timestamp getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Timestamp birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 

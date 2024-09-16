@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.service;
 
+import com.pascal7.ingre_api_mono.custom.CustomPage;
 import com.pascal7.ingre_api_mono.custom.TransactionDto;
 import com.pascal7.ingre_api_mono.custom.TransactionStat;
 import com.pascal7.ingre_api_mono.entity.Ingredient;
@@ -10,6 +11,7 @@ import com.pascal7.ingre_api_mono.repository.TxTransactionRepository;
 import com.pascal7.ingre_api_mono.utils.BankString;
 import com.pascal7.ingre_api_mono.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -101,6 +103,18 @@ public class TxTransactionServiceImpl implements TxTransactionService {
     public TransactionDto checkTransactionStatusToDone(String id) {
         validateTransactionStat(id, TransactionStat.ON_DELIVERY.getValue());
         return setStatTransaction(id, TransactionStat.DONE.getValue());
+    }
+
+    @Override
+    public TransactionDto cancelTransactionStatusFromOnDelivery(String id) {
+        validateTransactionStat(id, TransactionStat.ON_DELIVERY.getValue());
+        return setStatTransaction(id, TransactionStat.WAITING.getValue());
+    }
+
+    @Override
+    public TransactionDto cancelTransactionStatusFromDone(String id) {
+        validateTransactionStat(id, TransactionStat.DONE.getValue());
+        return setStatTransaction(id, TransactionStat.ON_DELIVERY.getValue());
     }
 
     @Override

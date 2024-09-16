@@ -50,6 +50,22 @@ public class TxIngredientRecipe {
         this.recipe = recipe;
     }
 
+    public String getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(String recipeId) {
+        this.recipeId = recipeId;
+    }
+
+    public String getIngredientId() {
+        return ingredientId;
+    }
+
+    public void setIngredientId(String ingredientId) {
+        this.ingredientId = ingredientId;
+    }
+
     public Ingredient getIngredient() {
         return ingredient;
     }

@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "mst_category")
@@ -15,6 +16,7 @@ public class Category {
     @GeneratedValue(generator = "mst_category_uuid")
     @GenericGenerator(name = "mst_category_uuid", strategy = "uuid")
     private String id;
+    @NotBlank
     private String category;
 
     public Category() {

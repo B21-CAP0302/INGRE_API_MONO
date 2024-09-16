@@ -26,12 +26,12 @@ public class RecipeDto {
     public RecipeDto() {
     }
 
-    public RecipeDto(Recipe recipe, String recipeDetail, List<TxIngredientRecipe> ingredients){
+    public RecipeDto(Recipe recipe, List<TxIngredientRecipe> ingredients){
         this.id = recipe.getId();
         this.name = recipe.getName();
         this.date = recipe.getDate();
         this.photo = recipe.getPhoto();
-        this.recipeDetail = recipeDetail;
+        this.recipeDetail = recipe.getDetail();
         this.category = recipe.getCategory();
         ingredients.forEach(
                 txIngredientRecipe -> {

@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pascal7.ingre_api_mono.custom.RecipeDto;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 @Entity
@@ -19,9 +17,15 @@ public class Recipe {
     @GenericGenerator(name = "recipe_uuid", strategy = "uuid")
     private String id;
 
+    @NotBlank
     private String name;
     @JsonIgnore
     private Timestamp date;
+
+    @NotBlank
+    @Column(columnDefinition = "text")
+    private String detail;
+    @NotBlank
     private String category;
     private String photo;
 
@@ -33,7 +37,7 @@ public class Recipe {
         this.name = recipeDto.getName();
         this.date = recipeDto.getDate();
         this.category = recipeDto.getCategory();
-        this.photo = recipeDto.getPhoto();
+        this.detail = recipeDto.getRecipeDetail();
     }
 
     public String getId() {
@@ -72,14 +76,11 @@ public class Recipe {
         this.photo = photo;
     }
 
-    @Override
-    public String toString() {
-        return "Recipe{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", category='" + category + '\'' +
-                ", photo='" + photo + '\'' +
-                '}';
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 }

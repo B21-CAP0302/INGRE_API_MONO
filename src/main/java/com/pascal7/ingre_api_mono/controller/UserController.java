@@ -1,5 +1,6 @@
 package com.pascal7.ingre_api_mono.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pascal7.ingre_api_mono.custom.ResponseStat;
 import com.pascal7.ingre_api_mono.entity.User;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseStat createUser(@RequestPart String user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+    public ResponseStat createUser(@RequestPart String user,@Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         customer.setRole("user");
@@ -50,7 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/register/admin")
-    public ResponseStat createAdmin(@RequestPart String user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+    public ResponseStat createAdmin(@RequestPart String user, @Nullable @RequestPart("upload")MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         customer.setVerificationStat(VerificationStat.UNVERIFIED.getValue());
         customer.setRole("admin");
@@ -65,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/api/user/profile/update")
-    public User updateProfile(@RequestPart String user, @Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
+    public User updateProfile(@RequestPart String user,@Nullable @RequestPart("upload") MultipartFile multipartFile) throws IOException {
         User customer = objectMapper.readValue(user, User.class);
         return userService.updateWithFile(customer, multipartFile);
     }

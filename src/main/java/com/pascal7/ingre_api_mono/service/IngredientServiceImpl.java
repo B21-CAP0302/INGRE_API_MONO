@@ -25,7 +25,21 @@ public class IngredientServiceImpl implements IngredientService{
         helper.validateIdIsNull(ingredient.getId());
         validateNameIsNotExist(ingredient.getName());
         validateStockIsNotMinus(ingredient.getStock());
+        validatePriceIsNotMinus(ingredient.getPrice());
+        validateIngredientFieldDidNotExist(ingredient.getName(), ingredient.getPrice(), ingredient.getStock());
         return ingredientRepository.save(ingredient);
+    }
+
+    private void validateIngredientFieldDidNotExist(String name, Integer price, Integer stock) {
+        if(ingredientRepository.findByNameAndPriceAndStock(name, price, stock).isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BankString.accessDenied);
+        }
+    }
+
+    private void validatePriceIsNotMinus(Integer price) {
+        if(price <= 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "price is not valid");
+        }
     }
 
     private void validateNameIsNotExist(String name) {
@@ -52,6 +66,8 @@ public class IngredientServiceImpl implements IngredientService{
         helper.validateIdIsNotNull(ingredient.getId());
         validateIdIsExist(ingredient.getId());
         validateStockIsNotMinus(ingredient.getStock());
+        validatePriceIsNotMinus(ingredient.getPrice());
+        validateIngredientFieldDidNotExist(ingredient.getName(), ingredient.getPrice(), ingredient.getStock());
         ingredient.setDate(getById(ingredient.getId()).getDate());
         return ingredientRepository.save(ingredient);
     }

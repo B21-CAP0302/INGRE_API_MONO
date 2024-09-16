@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,72 +34,63 @@ public class RecipeServiceImpl implements RecipeService{
     Helper helper;
 
     @Autowired
-    RecipeDetailServiceImpl recipeDetailService;
-
-    @Autowired
     ImageEntityService imageEntityService;
 
     @Override
     public RecipeDto create(RecipeDto recipeDto) {
         helper.validateIdIsNull(recipeDto.getId());
-        Recipe recipe = recipeRepository.save(new Recipe(recipeDto));
-        String recipeDetail = recipeDto.getRecipeDetail();
-        recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
+        Recipe recipe = new Recipe(recipeDto);
+        setPhotoIfExist(recipeDto, recipe);
+//        System.out.println(recipe.getPhoto());
+        recipe = recipeRepository.save(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipeDto.setId(recipe.getId());
         recipeDto.setIngredients(recipeDto.getIngredients()
                 .stream()
                 .map(
-                    ingredientDto -> new IngredientDto(
-                            ingredientService
-                                    .getById(
-                                            ingredientDto
-                                                    .getIngredientId()),
-                                            ingredientDto
-                                                    .getQty()
-                    )
+                    ingredientDto -> {
+                        validateQtyIsNotMinus(ingredientDto.getQty());
+                        return new IngredientDto(
+                                ingredientService
+                                        .getById(
+                                                ingredientDto
+                                                        .getIngredientId()),
+                                ingredientDto
+                                        .getQty()
+                        );
+                    }
         ).collect(Collectors.toList()));
         return recipeDto;
     }
 
-    private void saveTxIngredientRecipe(RecipeDto recipeDto, Recipe recipe) {
-        recipeDto.getIngredients().forEach(
-                ingredientDto -> {
-                    txIngredientRecipeService.create(
-                            new TxIngredientRecipe(
-                                    recipe,
-                                    ingredientService.getById(ingredientDto.getIngredientId()),
-                                    ingredientDto.getQty())
-                    );
-                }
-        );
+    private void validateQtyIsNotMinus(Integer qty) {
+        if(qty <= 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "qty is not valid");
+        }
     }
 
-    private List<RecipeDetail> getRecipeDetails(String recipeDetail, Recipe recipe) {
-        List<RecipeDetail> recipeDetails = new ArrayList<>();
-        for (int i = 0; i < Math.floorDiv(recipeDetail.length(), 255) + 1; i++) {
-            String detail;
-            if (recipeDetail.length() > 255){
-                detail = recipeDetail.substring(255);
-                recipeDetail =  recipeDetail.replace(detail, "");
-            } else {
-                detail = recipeDetail;
-            }
-            recipeDetails.add(new RecipeDetail(recipe, detail));
-        }
-        Collections.reverse(recipeDetails);
-        return recipeDetails;
+    private void saveTxIngredientRecipe(RecipeDto recipeDto, Recipe recipe) {
+        recipeDto.getIngredients()
+                .stream()
+                .peek(
+                    ingredientDto -> {
+                        ingredientService.getById(ingredientDto.getIngredientId());
+                        validateQtyIsNotMinus(ingredientDto.getQty());
+                    })
+                .forEach(ingredientDto -> txIngredientRecipeService.create(
+                    new TxIngredientRecipe(
+                            recipe,
+                            ingredientService.getById(ingredientDto.getIngredientId()),
+                            ingredientDto.getQty())
+                    )
+                );
     }
 
     @Override
     public RecipeDto getById(String id) {
         validateIdIsExist(id);
         Recipe recipe = recipeRepository.getById(id);
-        StringBuilder detail = new StringBuilder();
-        for (RecipeDetail recipeDetail: recipeDetailService.getByRecipe(recipe)) {
-            detail.append(recipeDetail.getDetail());
-        }
-        return new RecipeDto(recipe, detail.toString(), txIngredientRecipeService.getByRecipe(recipe));
+        return new RecipeDto(recipe, txIngredientRecipeService.getByRecipe(recipe));
     }
 
     private void validateIdIsExist(String id) {
@@ -113,28 +103,25 @@ public class RecipeServiceImpl implements RecipeService{
     public RecipeDto update(RecipeDto recipeDto) {
         validateIdIsExist(recipeDto.getId());
         Recipe recipe = new Recipe(recipeDto);
-        deleteRecipeDetail(recipe);
-        String recipeDetail = recipeDto.getRecipeDetail();
-        recipeDetailService.create(getRecipeDetails(recipeDetail, recipe));
+        setPhotoIfExist(recipeDto, recipe);
         deleteIngredientList(recipe);
         saveTxIngredientRecipe(recipeDto, recipe);
         recipe.setDate(getById(recipe.getId()).getDate());
-        recipeDto.setId(recipeRepository.save(recipe).getId());
+        recipe = recipeRepository.save(recipe);
+        recipeDto.setId(recipe.getId());
         return recipeDto;
+    }
+
+    private void setPhotoIfExist(RecipeDto recipeDto, Recipe recipe) {
+        if(!(recipeDto.getPhoto() == null)){
+            recipe.setPhoto(recipeDto.getPhoto());
+        }
     }
 
     private void deleteIngredientList(Recipe recipe) {
         txIngredientRecipeService.getByRecipe(recipe).forEach(
                 txIngredientRecipe -> {
                     txIngredientRecipeService.delete(txIngredientRecipe.getId());
-                }
-        );
-    }
-
-    private void deleteRecipeDetail(Recipe recipe) {
-        recipeDetailService.getByRecipe(recipe).forEach(
-                recipeDetail -> {
-                    recipeDetailService.delete(recipeDetail.getId());
                 }
         );
     }
@@ -154,7 +141,6 @@ public class RecipeServiceImpl implements RecipeService{
     public void delete(String id) {
         validateIdIsExist(id);
         Recipe recipe = new Recipe(getById(id));
-        deleteRecipeDetail(recipe);
         deleteIngredientList(recipe);
         recipeRepository.delete(recipe);
         throw new ResponseStatusException(HttpStatus.ACCEPTED, String.format(BankString.idDeleteFormat, id));
@@ -165,13 +151,8 @@ public class RecipeServiceImpl implements RecipeService{
         List<RecipeDto> recipeDtos = new ArrayList<>();
         recipeRepository.findByCategory(category).forEach(
                 recipe -> {
-                    StringBuilder detail = new StringBuilder();
-                    recipeDetailService.getByRecipe(recipe).forEach(
-                            recipeDetail -> detail.append(recipeDetail.getDetail())
-                    );
                     recipeDtos.add(new RecipeDto(
                             recipe,
-                            detail.toString(),
                             txIngredientRecipeService.getByRecipe(recipe))
                     );
                 }
@@ -196,21 +177,19 @@ public class RecipeServiceImpl implements RecipeService{
     private void buildRecipe(RecipeDto recipe, MultipartFile multipartFile) throws IOException {
         if(multipartFile != null){
             setRecipeWithFile(recipe, multipartFile);
-        } else {
-            setRecipeWithoutFile(recipe);
         }
     }
 
     private void setRecipeWithFile(RecipeDto recipe, MultipartFile multipartFile) throws IOException {
         if(!multipartFile.isEmpty()){
+            deleteImageRecipe(recipe);
             imageEntityService.addMultipartFile(recipe.getId(), multipartFile);
             recipe.setPhoto(BankString.fileApi + recipe.getId());
         }
     }
 
-    private void setRecipeWithoutFile(RecipeDto recipe) {
+    private void deleteImageRecipe(RecipeDto recipe) {
         Optional<ImageEntity> imageEntity = imageEntityService.getByIdOptional(recipe.getId());
         imageEntity.ifPresent(entity -> imageEntityService.delete(entity.getId()));
-        recipe.setPhoto(null);
     }
 }
